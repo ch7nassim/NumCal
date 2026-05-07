@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Numérologie Pythagoricienne</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8c96a;
+    --gold-dim: #7a5e2a;
+    --ink: #0d0a06;
+    --parchment: #1a1408;
+    --parchment-mid: #231c0d;
+    --parchment-light: #2e2410;
+    --cream: #e8d9b0;
+    --cream-dim: #9e8a62;
+    --red-accent: #8b2020;
+    --glow: rgba(201,168,76,0.15);
+  }
+
+  body {
+    background-color: var(--ink);
+    color: var(--cream);
+    font-family: 'EB Garamond', serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Grain texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* Background radial glow */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vw;
+    height: 80vh;
+    background: radial-gradient(ellipse, rgba(201,168,76,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    position: relative;
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    margin-bottom: 56px;
+    animation: fadeDown 1.2s ease both;
+  }
+
+  .star-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+    margin: 16px 0;
+  }
+  .star-divider span {
+    font-size: 22px;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .star-divider .line {
+    flex: 1;
+    max-width: 120px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+  }
+
+  h1 {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.2rem, 4vw, 1.8rem);
+    letter-spacing: 0.06em;
+    color: var(--gold-light);
+    text-shadow: 0 0 40px rgba(201,168,76,0.4);
+    line-height: 1.4;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+    color: var(--cream-dim);
+    font-style: italic;
+    margin-top: 8px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── TABLE PYTHAGORICIENNE ── */
+  .pytha-table-wrap {
+    background: var(--parchment-mid);
+    border: 1px solid var(--gold-dim);
+    border-radius: 4px;
+    padding: 28px 20px;
+    margin-bottom: 40px;
+    text-align: center;
+    position: relative;
+    animation: fadeUp 1s ease 0.3s both;
+  }
+  .pytha-table-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+
+  .pytha-table-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 20px;
+  }
+
+  .pytha-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 6px;
+    max-width: 500px;
+    margin: 0 auto 8px;
+  }
+
+  .pytha-num {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    color: var(--gold);
+    padding: 4px 2px;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+
+  .pytha-letter {
+    font-family: 'EB Garamond', serif;
+    font-size: 0.9rem;
+    color: var(--cream-dim);
+    padding: 3px 2px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── INPUT AREA ── */
+  .input-section {
+    margin-bottom: 40px;
+    animation: fadeUp 1s ease 0.5s both;
+  }
+
+  .input-label {
+    display: block;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 10px;
+  }
+
+  .input-wrap {
+    position: relative;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    background: var(--parchment-light);
+    border: 1px solid var(--gold-dim);
+    border-radius: 3px;
+    color: var(--gold-light);
+    font-family: 'EB Garamond', serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.15em;
+    padding: 16px 56px 16px 20px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  input[type="text"]::placeholder { color: var(--gold-dim); opacity: 0.5; }
+  input[type="text"]:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 24px rgba(201,168,76,0.15), inset 0 0 12px rgba(201,168,76,0.05);
+  }
+
+  .clear-btn {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--gold-dim);
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+  .clear-btn:hover { color: var(--gold); }
+
+  /* ── LETTRE DÉCOMPOSITION ── */
+  .letters-display {
+    margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    min-height: 52px;
+  }
+
+  .letter-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    opacity: 0;
+    transform: translateY(12px) scale(0.9);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .letter-tile.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  .letter-char {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    color: var(--cream);
+    background: var(--parchment-mid);
+    border: 1px solid rgba(201,168,76,0.3);
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    letter-spacing: 0;
+  }
+  .letter-val {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    color: var(--gold);
+  }
+  .letter-tile.space .letter-char {
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+  }
+
+  /* ── RÉSULTATS ── */
+  .results-section {
+    display: none;
+    animation: fadeUp 0.6s ease both;
+  }
+  .results-section.visible { display: block; }
+
+  .result-frame {
+    border: 1px solid var(--gold-dim);
+    background: var(--parchment-mid);
+    border-radius: 4px;
+    padding: 36px 28px;
+    text-align: center;
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .result-frame::before, .result-frame::after {
+    content: '✦';
+    position: absolute;
+    color: var(--gold-dim);
+    font-size: 0.8rem;
+  }
+  .result-frame::before { top: 10px; left: 14px; }
+  .result-frame::after { bottom: 10px; right: 14px; }
+
+  .result-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 12px;
+  }
+
+  .result-number {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(3rem, 12vw, 5rem);
+    color: var(--gold-light);
+    line-height: 1;
+    text-shadow: 0 0 60px rgba(201,168,76,0.5);
+    transition: all 0.4s ease;
+  }
+
+  .result-number.pulse {
+    animation: pulse 0.5s ease;
+  }
+
+  .result-sum {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    color: var(--cream-dim);
+    font-size: 0.85rem;
+    margin-top: 8px;
+  }
+
+  /* ── REDUCTION CHAIN ── */
+  .reduction-chain {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 14px 0 0;
+  }
+  .chain-step {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    color: var(--cream-dim);
+  }
+  .chain-step.final {
+    color: var(--gold);
+    font-size: 1.4rem;
+  }
+  .chain-arrow {
+    color: var(--gold-dim);
+    font-size: 0.9rem;
+  }
+
+  /* ── INTERPRETATION ── */
+  .interp-section {
+    border: 1px solid rgba(201,168,76,0.25);
+    background: linear-gradient(135deg, var(--parchment) 0%, var(--parchment-mid) 100%);
+    border-radius: 4px;
+    padding: 28px;
+    position: relative;
+  }
+  .interp-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 20px; right: 20px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+  }
+
+  .interp-number-badge {
+    display: inline-block;
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 2rem;
+    color: var(--gold);
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    border: 1px solid var(--gold-dim);
+    border-radius: 50%;
+    margin-bottom: 16px;
+    box-shadow: 0 0 20px rgba(201,168,76,0.2);
+  }
+
+  .interp-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    letter-spacing: 0.12em;
+    color: var(--gold-light);
+    margin-bottom: 10px;
+  }
+
+  .interp-text {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--cream-dim);
+    font-style: italic;
+  }
+
+  .interp-keywords {
+    margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .keyword {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    border: 1px solid rgba(201,168,76,0.2);
+    padding: 4px 10px;
+    border-radius: 2px;
+    background: rgba(201,168,76,0.04);
+  }
+
+  /* ── VOYELLES / CONSONNES ── */
+  .secondary-results {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .mini-result {
+    border: 1px solid rgba(201,168,76,0.2);
+    background: var(--parchment);
+    border-radius: 3px;
+    padding: 18px 14px;
+    text-align: center;
+  }
+  .mini-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 8px;
+  }
+  .mini-number {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 2rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .mini-sub {
+    font-size: 0.7rem;
+    color: var(--cream-dim);
+    font-style: italic;
+    margin-top: 4px;
+  }
+
+  /* ── FOOTER ORNEMENT ── */
+  .footer-ornament {
+    text-align: center;
+    margin-top: 60px;
+    color: var(--gold-dim);
+    font-size: 1.4rem;
+    letter-spacing: 0.4em;
+    opacity: 0.6;
+    animation: fadeUp 1s ease 0.8s both;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.08); text-shadow: 0 0 80px rgba(201,168,76,0.8); }
+    100% { transform: scale(1); }
+  }
+
+  @media (max-width: 480px) {
+    .secondary-results { grid-template-columns: 1fr; }
+    .pytha-letter { font-size: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="star-divider">
+      <div class="line"></div>
+      <span>✦</span>
+      <span>⬟</span>
+      <span>✦</span>
+      <div class="line"></div>
+    </div>
+    <h1>Numérologie<br>Pythagoricienne</h1>
+    <p class="subtitle">L'Art Sacré des Nombres selon Pythagore de Samos</p>
+    <div class="star-divider">
+      <div class="line"></div>
+      <span>✦</span>
+      <div class="line"></div>
+    </div>
+  </header>
+
+  <!-- TABLE PYTHAGORICIENNE -->
+  <div class="pytha-table-wrap">
+    <p class="pytha-table-title">Table de Correspondance</p>
+    <div class="pytha-grid" id="pythaGrid"></div>
+  </div>
+
+  <!-- INPUT -->
+  <div class="input-section">
+    <label class="input-label" for="wordInput">Mot ou Nom à analyser</label>
+    <div class="input-wrap">
+      <input type="text" id="wordInput" placeholder="Entrez un mot…" autocomplete="off" spellcheck="false">
+      <button class="clear-btn" id="clearBtn" title="Effacer">×</button>
+    </div>
+    <div class="letters-display" id="lettersDisplay"></div>
+  </div>
+
+  <!-- RÉSULTATS -->
+  <div class="results-section" id="resultsSection">
+
+    <div class="result-frame">
+      <p class="result-label">Nombre d'Expression</p>
+      <div class="result-number" id="mainNumber">—</div>
+      <p class="result-sum" id="sumDetail"></p>
+      <div class="reduction-chain" id="reductionChain"></div>
+    </div>
+
+    <div class="interp-section" id="interpSection">
+      <div class="interp-number-badge" id="interpBadge"></div>
+      <p class="interp-title" id="interpTitle"></p>
+      <p class="interp-text" id="interpText"></p>
+      <div class="interp-keywords" id="interpKeywords"></div>
+    </div>
+
+    <div class="secondary-results">
+      <div class="mini-result">
+        <p class="mini-label">Nombre de l'Âme<br>(Voyelles)</p>
+        <div class="mini-number" id="soulNumber">—</div>
+        <p class="mini-sub" id="soulSub"></p>
+      </div>
+      <div class="mini-result">
+        <p class="mini-label">Nombre de Personnalité<br>(Consonnes)</p>
+        <div class="mini-number" id="personNumber">—</div>
+        <p class="mini-sub" id="personSub"></p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer-ornament">✦ ⬟ ✦</div>
+
+</div>
+
+<script>
+// ── DONNÉES ──────────────────────────────────────────────────────────────────
+
+const PYTHA = {
+  A:1, B:2, C:3, D:4, E:5, F:6, G:7, H:8, I:9,
+  J:1, K:2, L:3, M:4, N:5, O:6, P:7, Q:8, R:9,
+  S:1, T:2, U:3, V:4, W:5, X:6, Y:7, Z:8
+};
+
+const VOWELS = new Set(['A','E','I','O','U','Y']);
+
+const INTERPRETATIONS = {
+  1: {
+    title: 'L\'Unité — Le Principe Premier',
+    text: 'Le 1 incarne la force originelle, la volonté créatrice et l\'individualité absolue. Il est l\'étincelle divine d\'où naît toute manifestation. Ce nombre révèle un être de leadership, d\'initiative et d\'ambition souveraine.',
+    keywords: ['Leadership', 'Pionnier', 'Indépendance', 'Volonté', 'Originalité']
+  },
+  2: {
+    title: 'La Dualité — Le Principe d\'Union',
+    text: 'Le 2 est la réceptivité, l\'harmonie et la médiation entre les forces opposées. Il symbolise la lune, la féminité cosmique et l\'art du dialogue. Ce nombre révèle une sensibilité profonde et un don naturel pour la diplomatie.',
+    keywords: ['Diplomatie', 'Sensibilité', 'Coopération', 'Équilibre', 'Intuition']
+  },
+  3: {
+    title: 'La Trinité — Le Principe de Création',
+    text: 'Le 3 est la synthèse des opposés, la joie créatrice et l\'expression de soi. Il gouverne l\'art, la communication et l\'optimisme solaire. Ce nombre révèle un esprit fertile, communicatif et rayonnant.',
+    keywords: ['Créativité', 'Expression', 'Joie', 'Communication', 'Art']
+  },
+  4: {
+    title: 'Le Carré — Le Principe d\'Ordre',
+    text: 'Le 4 est la stabilité de la terre, la rigueur constructive et la discipline sacrée. Il incarne les quatre éléments et les quatre points cardinaux. Ce nombre révèle un bâtisseur patient, méthodique et fiable.',
+    keywords: ['Stabilité', 'Travail', 'Organisation', 'Discipline', 'Fiabilité']
+  },
+  5: {
+    title: 'Le Pentagone — Le Principe de Liberté',
+    text: 'Le 5 est le mouvement perpétuel, la liberté et l\'aventure de l\'esprit. Il gouverne les sens, le changement et l\'adaptabilité. Ce nombre révèle une nature dynamique, curieuse et assoiffée d\'expériences.',
+    keywords: ['Liberté', 'Aventure', 'Changement', 'Curiosité', 'Adaptabilité']
+  },
+  6: {
+    title: 'L\'Hexagramme — Le Principe d\'Harmonie',
+    text: 'Le 6 est l\'amour universel, la responsabilité et la beauté de l\'équilibre. Il gouverne le foyer, la guérison et la justice cosmique. Ce nombre révèle un être profondément attaché à l\'harmonie et au service des autres.',
+    keywords: ['Amour', 'Harmonie', 'Responsabilité', 'Beauté', 'Service']
+  },
+  7: {
+    title: 'Le Septénaire — Le Principe de Mystère',
+    text: 'Le 7 est le nombre sacré par excellence, gouvernant la sagesse intérieure, la spiritualité et l\'introspection. Il est le chercheur de vérités cachées. Ce nombre révèle une intelligence analytique tournée vers les profondeurs de l\'existence.',
+    keywords: ['Sagesse', 'Mysticisme', 'Analyse', 'Solitude', 'Vérité']
+  },
+  8: {
+    title: 'L\'Octave — Le Principe de Puissance',
+    text: 'Le 8 est la force matérielle et spirituelle en équilibre parfait, symbolisant l\'infini couché. Il gouverne l\'abondance, l\'autorité et la loi karmique. Ce nombre révèle un être doté d\'une puissance exceptionnelle d\'action dans le monde.',
+    keywords: ['Pouvoir', 'Abondance', 'Autorité', 'Karma', 'Ambition']
+  },
+  9: {
+    title: 'L\'Ennéade — Le Principe d\'Accomplissement',
+    text: 'Le 9 est le nombre de l\'achèvement, de la compassion universelle et de la sagesse accomplie. Il contient tous les autres nombres et symbolise la complétude du cycle. Ce nombre révèle un esprit humaniste, généreux et habité par l\'idéal.',
+    keywords: ['Accomplissement', 'Compassion', 'Humanisme', 'Idéalisme', 'Universalité']
+  },
+  11: {
+    title: 'Le Maître Illuminé — Nombre Maître',
+    text: 'Le 11 est un Nombre Maître, porteur d\'une vibration élevée d\'intuition et d\'illumination spirituelle. Il connecte le monde visible à l\'invisible. Ce nombre révèle une mission particulière : être un canal entre les plans subtils et l\'humanité.',
+    keywords: ['Intuition', 'Illumination', 'Inspiration', 'Vision', 'Maîtrise']
+  },
+  22: {
+    title: 'Le Grand Architecte — Nombre Maître',
+    text: 'Le 22 est le Nombre Maître des bâtisseurs, doué d\'une capacité extraordinaire à matérialiser les grandes visions. Il unit l\'idéal du 11 à la puissance constructive du 4. Ce nombre révèle un être capable de transformer les rêves en réalités durables.',
+    keywords: ['Architecture', 'Manifestation', 'Vision', 'Construction', 'Maîtrise']
+  },
+  33: {
+    title: 'Le Maître Enseignant — Nombre Maître',
+    text: 'Le 33 est le Nombre Maître de l\'enseignement et de la guérison universelle. Réunissant la créativité du 3 à sa puissance maîtrisée, il représente l\'amour inconditionnel en action. Ce nombre révèle une vocation d\'élévation de la conscience collective.',
+    keywords: ['Enseignement', 'Guérison', 'Amour', 'Sacrifice', 'Lumière']
+  }
+};
+
+// ── GÉNÉRATION TABLE ──────────────────────────────────────────────────────────
+
+function buildTable() {
+  const grid = document.getElementById('pythaGrid');
+  const nums  = [1,2,3,4,5,6,7,8,9];
+  const rows  = [
+    ['A','B','C','D','E','F','G','H','I'],
+    ['J','K','L','M','N','O','P','Q','R'],
+    ['S','T','U','V','W','X','Y','Z','']
+  ];
+  nums.forEach(n => {
+    const d = document.createElement('div');
+    d.className = 'pytha-num';
+    d.textContent = n;
+    grid.appendChild(d);
+  });
+  rows.forEach(row => {
+    row.forEach(l => {
+      const d = document.createElement('div');
+      d.className = 'pytha-letter';
+      d.textContent = l;
+      grid.appendChild(d);
+    });
+  });
+}
+
+// ── LOGIQUE NUMÉROLOGIE ───────────────────────────────────────────────────────
+
+function normalize(word) {
+  return word.toUpperCase().replace(/[ÀÂÄÁÃÅ]/g,'A').replace(/[ÈÊËÉ]/g,'E')
+    .replace(/[ÌÎÏÍ]/g,'I').replace(/[ÒÔÖÓÕ]/g,'O').replace(/[ÙÛÜÚ]/g,'U')
+    .replace(/[ÇC]/g,(m) => m==='Ç'?'C':m).replace(/Ñ/g,'N');
+}
+
+function isMasterNumber(n) { return [11,22,33].includes(n); }
+
+function reduce(n) {
+  const chain = [n];
+  while (n > 9 && !isMasterNumber(n)) {
+    n = String(n).split('').reduce((s,d) => s + parseInt(d), 0);
+    chain.push(n);
+    if (isMasterNumber(n)) break;
+  }
+  return { final: n, chain };
+}
+
+function sumLetters(letters) {
+  return letters.reduce((s, l) => s + (PYTHA[l] || 0), 0);
+}
+
+function analyze(word) {
+  const norm   = normalize(word);
+  const chars  = norm.split('').filter(c => c === ' ' || PYTHA[c] !== undefined);
+  const letters= chars.filter(c => c !== ' ');
+  const vowels = letters.filter(c => VOWELS.has(c));
+  const consos = letters.filter(c => !VOWELS.has(c));
+
+  const total  = sumLetters(letters);
+  const soul   = sumLetters(vowels);
+  const person = sumLetters(consos);
+
+  return {
+    chars,
+    total, totalR: reduce(total),
+    soul,  soulR:  reduce(soul),
+    person,personR:reduce(person)
+  };
+}
+
+// ── AFFICHAGE ─────────────────────────────────────────────────────────────────
+
+function renderLetters(chars) {
+  const display = document.getElementById('lettersDisplay');
+  display.innerHTML = '';
+  chars.forEach((c, i) => {
+    const tile = document.createElement('div');
+    if (c === ' ') {
+      tile.className = 'letter-tile space visible';
+      tile.innerHTML = `<div class="letter-char"> </div><div class="letter-val"> </div>`;
+    } else {
+      tile.className = 'letter-tile';
+      tile.innerHTML = `<div class="letter-char">${c}</div><div class="letter-val">${PYTHA[c]||''}</div>`;
+      setTimeout(() => tile.classList.add('visible'), i * 50);
+    }
+    display.appendChild(tile);
+  });
+}
+
+function renderChain(chainData) {
+  const el = document.getElementById('reductionChain');
+  if (chainData.chain.length <= 1) { el.innerHTML = ''; return; }
+  el.innerHTML = chainData.chain.map((n, i) => {
+    const cls = i === chainData.chain.length - 1 ? 'chain-step final' : 'chain-step';
+    return `<span class="${cls}">${n}</span>${i < chainData.chain.length-1 ? '<span class="chain-arrow">→</span>' : ''}`;
+  }).join('');
+}
+
+function renderInterp(num) {
+  const d = INTERPRETATIONS[num] || INTERPRETATIONS[9];
+  document.getElementById('interpBadge').textContent = num;
+  document.getElementById('interpTitle').textContent = d.title;
+  document.getElementById('interpText').textContent  = d.text;
+  const kw = document.getElementById('interpKeywords');
+  kw.innerHTML = d.keywords.map(k => `<span class="keyword">${k}</span>`).join('');
+}
+
+function displayResults(data) {
+  const mainNum = document.getElementById('mainNumber');
+  mainNum.classList.remove('pulse');
+  void mainNum.offsetWidth;
+  mainNum.textContent = data.totalR.final;
+  mainNum.classList.add('pulse');
+
+  document.getElementById('sumDetail').textContent =
+    `Somme brute : ${data.total}`;
+  renderChain(data.totalR);
+
+  document.getElementById('soulNumber').textContent = data.soulR.final;
+  document.getElementById('soulSub').textContent    = `Somme : ${data.soul}`;
+  document.getElementById('personNumber').textContent = data.personR.final;
+  document.getElementById('personSub').textContent    = `Somme : ${data.person}`;
+
+  renderInterp(data.totalR.final);
+  document.getElementById('resultsSection').classList.add('visible');
+}
+
+// ── ÉVÉNEMENTS ────────────────────────────────────────────────────────────────
+
+let debounceTimer;
+document.getElementById('wordInput').addEventListener('input', function() {
+  const val = this.value.trim();
+  clearTimeout(debounceTimer);
+  if (!val) {
+    document.getElementById('lettersDisplay').innerHTML = '';
+    document.getElementById('resultsSection').classList.remove('visible');
+    return;
+  }
+  debounceTimer = setTimeout(() => {
+    const data = analyze(val);
+    renderLetters(data.chars);
+    displayResults(data);
+  }, 200);
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  document.getElementById('wordInput').value = '';
+  document.getElementById('lettersDisplay').innerHTML = '';
+  document.getElementById('resultsSection').classList.remove('visible');
+  document.getElementById('wordInput').focus();
+});
+
+buildTable();
+</script>
+</body>
+</html>
